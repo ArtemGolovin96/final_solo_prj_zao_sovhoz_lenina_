@@ -2,11 +2,51 @@ import React, { Component } from "react";
 import "./LoginPage.css";
 import store from "../../redux/store";
 import { connect } from "react-redux";
+import axios from 'axios'
+
 import logo_login_page from "./logo_login_page.svg";
+import { loginInputFromLoginPageAction, passwInputFromLoginPageAction } from '../../redux/action'
 
 // ./img/LoginPage_img/logo_login_page.svg
 // file:///C:/Users/User/Desktop/final_solo_prj_zao_sovhoz_lenina_/frontend/img/LoginPage_img/k.jpg
 class LoginPage extends Component {
+
+  state = {
+    password: false
+  }
+
+
+  onClickPassword = (e) => {
+    e.preventDefault()
+    if(!this.state.password) {
+      this.setState({ password: true })
+    } else {
+      this.setState({ password: false })
+    } 
+  }
+
+  getOnSubmit = (data) => {
+    const axiosOptions =  {
+      method: "POST",
+      headers: {"Content-Type": "application/json; charset=utf-8"},
+      data: data
+    }
+    axios.post("http://localhost:7778/", axiosOptions)
+    .then((res) => {
+      console.log(res)
+    })
+  }
+
+  onSubmit = (e) => {
+    e.preventDefault();
+    const dataFromForm = new FormData(e.target);
+    const data = [...dataFromForm.values()];
+    const user = {login: data[0], pass: data[1]}
+    console.log(user)
+    this.getOnSubmit(user)
+  }
+
+
   render() {
     return (
       <main className="login-page">
@@ -19,26 +59,28 @@ class LoginPage extends Component {
             alt="ЗАО Совхоз имени Ленина"
           />
         </a>
-        <form className="login-form">
+        <form className="login-form" onSubmit={this.onSubmit}>
           <input
             className="login-input"
             name="login"
             maxLength="55"
             size="40"
             placeholder="Ваш пароль"
+            onChange={(e) => this.props.loginInputFromLoginPageActionProps(e)}
           ></input>
           <div className="input-password-container">
             <input
               className="password-input"
               name="password"
-              type="password"
+              type={this.state.password? "test" : "password"}
               maxLength="25"
               size="40"
               placeholder="Ваш пароль"
+              onChange={(e) => this.props.passwInputFromLoginPageActionProps(e)}
             ></input>
-            <button className="pokazatbutton">👁‍🗨</button>
+            <button className="pokazatbutton" onClick={this.onClickPassword}>👁‍🗨</button>
           </div>
-          <button className="login-button">ВОЙТИ</button>
+          <button className="login-button" type="submit">ВОЙТИ</button>
         </form>
 
         <footer className="footer">
@@ -53,4 +95,14 @@ class LoginPage extends Component {
   }
 }
 
-export default LoginPage;
+
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginInputFromLoginPageActionProps: (e) => {dispatch(loginInputFromLoginPageAction(e.target.value))},
+    passwInputFromLoginPageActionProps: (e) => {dispatch(passwInputFromLoginPageAction(e.target.value))}
+  }
+}
+
+
+export default connect(()=>{}, mapDispatchToProps)(LoginPage)

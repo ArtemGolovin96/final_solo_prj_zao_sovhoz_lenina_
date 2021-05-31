@@ -5,11 +5,12 @@ import { Provider } from "react-redux";
 import Favicon from 'react-favicon'
 
 import LoginPage from './components/LoginPage/LoginPage';
-
+import SuperUserPage from './components/SuperUserPage/SuperUserPage';
 
 
 import logo from './logo.svg';
 import './App.css';
+
 
 
 
@@ -21,6 +22,7 @@ export default class App extends Component {
       <Favicon url={logo} />
         <title>{logo}</title>
           <Route path="/" exact component={LoginPage} />
+          <Route path="/admin" exact component={SuperUserPage} />
       </div>
       </Provider>
     );
