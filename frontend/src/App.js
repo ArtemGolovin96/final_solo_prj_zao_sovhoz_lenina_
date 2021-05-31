@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import store from './redux';
+import store from './redux/store';
 import { Route } from 'react-router-dom';
-import LoginPage from './components/LoginPage/LoginPage'
+import { Provider } from "react-redux";
+import Favicon from 'react-favicon'
+
+import LoginPage from './components/LoginPage/LoginPage';
+
 
 
 import logo from './logo.svg';
 import './App.css';
-
-import LoginPage from './components/LoginPage/LoginPage'
 
 
 
@@ -16,11 +18,13 @@ export default class App extends Component {
     return (
       <Provider store={store}>
       <div className="App">
-          <Route path="/login" exact component={LoginPage} />
+      <Favicon url={logo} />
+        <title>{logo}</title>
+          <Route path="/" exact component={LoginPage} />
       </div>
       </Provider>
     );
   }
 }
 
-export default App;
+
