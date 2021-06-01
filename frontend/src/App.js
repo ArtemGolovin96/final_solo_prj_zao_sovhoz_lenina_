@@ -6,6 +6,10 @@ import Favicon from 'react-favicon'
 
 import LoginPage from './components/LoginPage/LoginPage';
 import SuperUserPage from './components/SuperUserPage/SuperUserPage';
+import AgroPage from './components/AgroPage/AgroPage';
+import BrigadePage from './components/BrigadePage/BrigadePage';
+import SkladPage from './components/SkladPage/SkladPage';
+import RukovodstvoPage from './components/RukovodstvoPage/RukovodstvoPage';
 
 
 import logo from './logo.svg';
@@ -15,7 +19,7 @@ import './App.css';
 
 
 export default class App extends Component {
-  render() {
+  render() {  
     return (
       <Provider store={store}>
       <div className="App">
@@ -23,6 +27,10 @@ export default class App extends Component {
         <title>{logo}</title>
           <Route path="/" exact component={LoginPage} />
           <Route path="/admin" exact component={SuperUserPage} />
+          <Route path="/agro" exact component={AgroPage} />
+          <Route path="/brigade" exact component={BrigadePage} />
+          <Route path="/sklad" exact component={SkladPage} />
+          <Route path="/ruk" exact component={RukovodstvoPage} />
       </div>
       </Provider>
     );

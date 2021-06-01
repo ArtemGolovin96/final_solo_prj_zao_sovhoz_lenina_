@@ -17,7 +17,8 @@ class LoginPage extends Component {
 
 
   onClickPassword = (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    // this.props.match.params.id
     if(!this.state.password) {
       this.setState({ password: true })
     } else {
@@ -34,7 +35,13 @@ class LoginPage extends Component {
     axios.post("http://localhost:7778/", axiosOptions)
     .then((res) => {
       console.log(res)
+      return res;
     })
+    .then((response) => {
+      console.log(data)
+      this.props.history.push(`${response.data}`);
+    })
+    .catch(err => alert("Введен неправильный логин или пароль"))
   }
 
   onSubmit = (e) => {
@@ -42,10 +49,19 @@ class LoginPage extends Component {
     const dataFromForm = new FormData(e.target);
     const data = [...dataFromForm.values()];
     const user = {login: data[0], pass: data[1]}
-    console.log(user)
-    this.getOnSubmit(user)
+    if(this.validateLogin(user.login)) {
+      this.getOnSubmit(user);
+    } else {
+      alert("Вы ввели неправильный логин")
+    }
   }
 
+
+  validateLogin = (login)=> {
+    const reg = /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)$/;
+    console.log(reg.test(login))
+    return reg.test(login);
+}
 
   render() {
     return (
