@@ -42,7 +42,7 @@ const arrOfSapaces = [
   {
     id: 1,
     name: "Поле 1",
-    brigade: 1,
+    brigade: "1 - Совхоз Ленина",
     startyear: 2018,
     lastyearsyield: 1.5,
     sort: [
@@ -60,8 +60,8 @@ const arrOfSapaces = [
 
   {
     id: 2,
-    name: "Поле 1",
-    brigade: 1,
+    name: "Поле 2",
+    brigade: "1 - Совхоз Ленина",
     startyear: 2018,
     lastyearsyield: 1.5,
     sort: [
@@ -79,8 +79,8 @@ const arrOfSapaces = [
 
   {
     id: 3,
-    name: "Поле 1",
-    brigade: 2,
+    name: "Поле 3",
+    brigade: "2 - Молоково",
     startyear: 2018,
     lastyearsyield: 1.5,
     sort: [
@@ -99,7 +99,7 @@ const arrOfSapaces = [
   {
     id: 4,
     name: "Поле 4",
-    brigade: 2,
+    brigade: "2 - Молоково",
     startyear: 2018,
     lastyearsyield: 1.5,
     sort: [
@@ -118,7 +118,7 @@ const arrOfSapaces = [
   {
     id: 5,
     name: "Поле 5",
-    brigade: 2,
+    brigade: "2 - Молоково",
     startyear: 2018,
     lastyearsyield: 1.5,
     sort: [
