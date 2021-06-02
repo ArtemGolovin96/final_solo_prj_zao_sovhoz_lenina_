@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-// import "./SuperUserPage.css";
+import './AgroPage.css';
 import store from "../../redux/store";
 import { connect } from "react-redux";
 import axios from 'axios'
+import Space from './Space.js'
 
 // import {
 
@@ -14,7 +15,12 @@ class AgroPage extends Component {
   render() {
     return (
       <main className="agronom-page">
-          <h1>Страница агронома</h1>
+          <header className="agro-page-header">
+            <h1 className="agro-h1">Агроному место в поле!</h1>
+          </header>
+          <section className="main-section-sqr">
+            <Space />
+          </section>
       </main>
     );
   }
