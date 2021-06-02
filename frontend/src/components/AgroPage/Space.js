@@ -3,6 +3,7 @@ import "./AgroPage.css";
 import store from "../../redux/store";
 import { connect } from "react-redux";
 import axios from "axios";
+import VisualSpace from "./VisualSpace/VisualSpace";
 
 // import {
 
@@ -12,12 +13,19 @@ class Space extends Component {
   state = {
     open: false,
     arrOfSpacesFromBack: [],
+    clickedSpaceOpened: "",
+    sortsArr: [],
   };
 
-  onClickSpaceOpen = (e) => {
-    e.preventDefault();
+  onClickSpaceOpen = (e, el) => {
     this.setState({ open: true });
-    this.getSpaces();
+    const res = this.state.arrOfSpacesFromBack.find(
+      (item) => el.id === item.id
+    );
+    this.setState({ clickedSpaceOpened: res });
+    this.setState({ sortsArr: res.sort });
+    console.log(res.sort)
+        
   };
 
   componentDidMount() {
@@ -44,7 +52,10 @@ class Space extends Component {
           <h2 className="space-container-name">Название полей</h2>
           {this.state.arrOfSpacesFromBack.map((el) => {
             return (
-              <section className="space" onClick={this.onClickSpaceOpen}>
+              <section
+                className="space"
+                onClick={(e) => this.onClickSpaceOpen(e, el)}
+              >
                 <div className="container-name-space">
                   <p className="name-space">{el.name}</p>
                   <p className="name-brigade"> Бригада № {el.brigade}</p>
@@ -58,8 +69,38 @@ class Space extends Component {
         </div>
         <div className={this.state.open ? "space-opened" : "space-closed"}>
           <div className="container-name-space-opened">
-            <p className="name-space">Поле Тест</p>
-            <p className="name-brigade"> Бригада Тест</p>
+            <p className="name-space">{this.state.clickedSpaceOpened.name}</p>
+            <p className="name-brigade">
+              {" "}
+              Бригада № {this.state.clickedSpaceOpened.brigade}
+            </p>
+          </div>
+          <div className="container-space-information">
+            <p className="start-space">
+              Начало использования поля -{" "}
+              {this.state.clickedSpaceOpened.startyear} год
+            </p>
+            <p className="start-space">
+              Средняя планируемая урожайность с одного куста -{" "}
+              {this.state.clickedSpaceOpened.lastyearsyield} кг
+            </p>
+            <p className="start-space">
+              Средняя планируемая урожайность с одного метра грядки -{" "}
+              {(this.state.clickedSpaceOpened.lastyearsyield * (3.3)).toFixed(2)} кг
+            </p>
+            <ul className="space-sorts">Сорта ягоды в поле: {this.state.sortsArr.map((el) => {
+                return <li>{el.name},  </li>
+            })}    </ul>
+          </div>
+          <div className="container-space-opened-visual">
+              <div className="visual-space">
+                  <VisualSpace />
+              </div>
+              <div className="visual-space-information">
+              <div className="space-information">
+              <h4 className="space-information-mini">Информация</h4>
+              </div>
+              </div>
           </div>
         </div>
       </main>

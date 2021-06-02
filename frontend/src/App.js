@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import store from './redux/store';
 import { Route } from 'react-router-dom';
 import { Provider } from "react-redux";
-import Favicon from 'react-favicon'
+import Favicon from 'react-favicon';
+
 
 import LoginPage from './components/LoginPage/LoginPage';
 import SuperUserPage from './components/SuperUserPage/SuperUserPage';

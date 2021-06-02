@@ -20,6 +20,7 @@ class AgroPage extends Component {
           </header>
           <section className="main-section-sqr">
             <Space />
+
           </section>
       </main>
     );
