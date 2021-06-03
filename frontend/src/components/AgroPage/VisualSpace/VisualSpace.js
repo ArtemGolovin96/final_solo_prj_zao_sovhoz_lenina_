@@ -8,22 +8,24 @@ import "antd/dist/antd.css";
 import { Row, Col, Divider } from "antd";
 
 class VisualSpace extends Component {
+
   render() {
     return (
       <div className="gen-space">
         <Divider></Divider>
         <Row className="row">
-          <Col span={6} order={4} className="col"></Col>
-          <Col span={6} order={3} className="col"></Col>
-          <Col span={6} order={2} className="col"></Col>
-          <Col span={6} order={1} className="col"></Col>
+          <Col className="col"><p className='space-sector-p'>Сорт</p></Col>
+          <Col className="col"><p className='space-sector-p'></p></Col>
+          <Col className="col"><p className='space-sector-p'>Сектор</p></Col>
+          <Col className="col"><p className='space-sector-p'>Сектор</p></Col>
         </Row>
         <Row className="row">
-          <Col span={6} order={4} className="col"></Col>
-          <Col span={6} order={3} className="col"></Col>
-          <Col span={6} order={2} className="col"></Col>
-          <Col span={6} order={1} className="col"></Col>
+          <Col className="col"></Col>
+          <Col className="col"></Col>
+          <Col className="col"></Col>
+          <Col className="col"></Col>
         </Row>
+    
       </div>
     );
   }

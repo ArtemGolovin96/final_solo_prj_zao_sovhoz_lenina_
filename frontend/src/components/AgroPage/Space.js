@@ -4,6 +4,9 @@ import store from "../../redux/store";
 import { connect } from "react-redux";
 import axios from "axios";
 import VisualSpace from "./VisualSpace/VisualSpace";
+import { YMaps, Map, GeoObject, Rectangle, Button } from "react-yandex-maps";
+import ButtonGroup from "antd/lib/button/button-group";
+// import { Button } from "antd";
 
 // import {
 
@@ -15,6 +18,9 @@ class Space extends Component {
     arrOfSpacesFromBack: [],
     clickedSpaceOpened: "",
     sortsArr: [],
+    showMap: false,
+    buttonOnMapType: 'Гибрид',
+    typeOfMap: "yandex#publicMapHybrid",
   };
 
   onClickSpaceOpen = (e, el) => {
@@ -24,8 +30,7 @@ class Space extends Component {
     );
     this.setState({ clickedSpaceOpened: res });
     this.setState({ sortsArr: res.sort });
-    console.log(res.sort)
-        
+    console.log(res.sort);
   };
 
   componentDidMount() {
@@ -44,6 +49,29 @@ class Space extends Component {
         alert("Ошибка загрузки страницы. Обратитесь к администратору");
       });
   };
+
+  onClickTypeMap = (prevState) => {
+    console.log('cccc')
+    if (this.state.typeOfMap === "yandex#publicMapHybrid") {
+      this.setState({ typeOfMap: "yandex#map"  });
+      return Object.assign({}, prevState, { type: 'yandex#map' });
+    } else {
+      this.setState({ typeOfMap: "yandex#publicMapHybrid"  });
+      return Object.assign({}, prevState, { type: 'yandex#publicMapHybrid' });
+    }
+  };
+
+  onClickShoWMap = () => {
+    if (this.state.showMap === false) {
+      this.setState({ showMap: true });
+      console.log("check true");
+    } else {
+      this.setState({ showMap: false });
+    }
+  };
+  
+  
+  
 
   render() {
     return (
@@ -86,21 +114,61 @@ class Space extends Component {
             </p>
             <p className="start-space">
               Средняя планируемая урожайность с одного метра грядки -{" "}
-              {(this.state.clickedSpaceOpened.lastyearsyield * (3.3)).toFixed(2)} кг
+              {(this.state.clickedSpaceOpened.lastyearsyield * 3.3).toFixed(2)}{" "}
+              кг
             </p>
-            <ul className="space-sorts">Сорта ягоды в поле: {this.state.sortsArr.map((el) => {
-                return <li>{el.name},  </li>
-            })}    </ul>
+            <ul className="space-sorts">
+              Сорта ягоды в поле:{" "}
+              {this.state.sortsArr.map((el) => {
+                return <li>{el.name}, </li>;
+              })}{" "}
+            </ul>
           </div>
           <div className="container-space-opened-visual">
-              <div className="visual-space">
-                  <VisualSpace />
-              </div>
-              <div className="visual-space-information">
+            <div className="visual-space">
+              <VisualSpace />
+            </div>
+            <div className="visual-space-information">
               <div className="space-information">
-              <h4 className="space-information-mini">Информация</h4>
+                <h4 className="space-information-mini">Расположение поля</h4>
+                <button
+                  className="show-map-button"
+                  onClick={this.onClickShoWMap}
+                >
+                  {this.state.showMap
+                    ? "Скрыть карту"
+                    : "Показать расположение на карте"}
+                </button>
+                <div className="map-container">
+                  {
+
+                  }
+                  <YMaps className="ya-maps" >
+                    <Map
+                      defaultState={{ center: [55.75, 37.57], zoom: 10, type: this.state.typeOfMap ,}}
+                      width={300}
+                      margin={150}
+                    >
+                      <Button data={{content: this.state.buttonOnMapType}} options={{ maxWidth: [28, 150, 178] }} onClick={() => this.onClickTypeMap(this.state)}/>
+                      <GeoObject
+                        geometry={{
+                          type: "Point",
+                          coordinates: [55.8, 37.8],
+                        }}
+                        properties={{
+                          iconContent: "Я тащусь",
+                          hintContent: "Ну давай уже тащи",
+                        }}
+                        options={{
+                          preset: "islands#blackStretchyIcon",
+                          draggable: false,
+                        }}
+                      />
+                    </Map>
+                  </YMaps>
+                </div>
               </div>
-              </div>
+            </div>
           </div>
         </div>
       </main>
