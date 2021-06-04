@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import './AgroPage.css';
-import store from "../../redux/store";
-import { connect } from "react-redux";
+import store from '../../redux/store';
+import { connect } from 'react-redux';
 import axios from 'axios'
 import Space from './Space.js'
 

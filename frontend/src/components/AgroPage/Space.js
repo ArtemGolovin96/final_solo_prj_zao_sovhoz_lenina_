@@ -6,6 +6,7 @@ import axios from "axios";
 import VisualSpace from "./VisualSpace/VisualSpace";
 import { YMaps, Map, GeoObject, Rectangle, Button } from "react-yandex-maps";
 import ButtonGroup from "antd/lib/button/button-group";
+import { Link } from "react-router-dom";
 // import { Button } from "antd";
 
 // import {
@@ -53,10 +54,10 @@ class Space extends Component {
   onClickTypeMap = (prevState) => {
     console.log('cccc')
     if (this.state.typeOfMap === "yandex#publicMapHybrid") {
-      this.setState({ typeOfMap: "yandex#map"  });
+      this.setState({ typeOfMap: "yandex#map" });
       return Object.assign({}, prevState, { type: 'yandex#map' });
     } else {
-      this.setState({ typeOfMap: "yandex#publicMapHybrid"  });
+      this.setState({ typeOfMap: "yandex#publicMapHybrid" });
       return Object.assign({}, prevState, { type: 'yandex#publicMapHybrid' });
     }
   };
@@ -69,9 +70,9 @@ class Space extends Component {
       this.setState({ showMap: false });
     }
   };
-  
-  
-  
+
+
+
 
   render() {
     return (
@@ -92,7 +93,10 @@ class Space extends Component {
             );
           })}
           <section className="add-space-button-section">
-            <button className="add-space-button">Добавить новое поле</button>
+            <Link className="add-space-button-link" to="agro-calc">
+              <button className="add-space-button">Добавить новое поле
+              </button>
+            </Link>
           </section>
         </div>
         <div className={this.state.open ? "space-opened" : "space-closed"}>
@@ -145,11 +149,11 @@ class Space extends Component {
                   }
                   <YMaps className="ya-maps" >
                     <Map
-                      defaultState={{ center: [55.75, 37.57], zoom: 10, type: this.state.typeOfMap ,}}
+                      defaultState={{ center: [55.75, 37.57], zoom: 10, type: this.state.typeOfMap, }}
                       width={300}
                       margin={150}
                     >
-                      <Button data={{content: this.state.buttonOnMapType}} options={{ maxWidth: [28, 150, 178] }} onClick={() => this.onClickTypeMap(this.state)}/>
+                      <Button data={{ content: this.state.buttonOnMapType }} options={{ maxWidth: [28, 150, 178] }} onClick={() => this.onClickTypeMap(this.state)} />
                       <GeoObject
                         geometry={{
                           type: "Point",
@@ -185,4 +189,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(() => {}, mapDispatchToProps)(Space);
+export default connect(() => { }, mapDispatchToProps)(Space);
