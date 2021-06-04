@@ -14,10 +14,11 @@ const globalState = {
   adminDelPassInput: "",
   //роуты с логина
   rout: "",
+  //сорта ягоды с дидмаунта argo
+  globalArrOfSorts: [],
 }
 
 export default function reducer(state = globalState, action) {
-  // eslint-disable-next-line default-case
   switch (action.type) {
     case "CHANGE_INPUT_LOGIN":
       console.log(action.payload.loginFromInput)
@@ -39,9 +40,11 @@ export default function reducer(state = globalState, action) {
       console.log(action.payload.loginFromInputDelete)
       return { ...state, adminDelLoginInput: action.payload.loginFromInputDelete };
 
-    case "CHANGE_INPUT_PASS_ADMIN_DELETE":
-      console.log(action.payload.passFromInputDelete)
-      return { ...state, adminDelPassInput: action.payload.passFromInputDelete };
+    case "TAKE_ARR_OF_SORTS_FROM_BACK":
+      console.log(action.payload.arrOfSorts)
+      return { ...state, globalArrOfSorts: action.payload.arrOfSorts};
+      default:
+        return state
   }
 
 

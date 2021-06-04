@@ -61,4 +61,13 @@ export function passwInputFromAdminPageDeleteAction(passFromInputDelete) {
   }
 }
 
+export function takeArrOfSotsAction(arrOfSorts) {
+  return {
+    type: "TAKE_ARR_OF_SORTS_FROM_BACK",
+    payload: {
+      arrOfSorts
+    }
+  }
+}
+
 

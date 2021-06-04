@@ -15,15 +15,15 @@ class VisualSpace extends Component {
         <Divider></Divider>
         <Row className="row">
           <Col className="col"><p className='space-sector-p'>Сорт</p></Col>
-          <Col className="col"><p className='space-sector-p'></p></Col>
-          <Col className="col"><p className='space-sector-p'>Сектор</p></Col>
-          <Col className="col"><p className='space-sector-p'>Сектор</p></Col>
+          <Col className="col"><p className='space-sector-p'>Сорт</p></Col>
+          <Col className="col"><p className='space-sector-p'>Сорт</p></Col>
+          <Col className="col"><p className='space-sector-p'>Сорт</p></Col>
         </Row>
         <Row className="row">
-          <Col className="col"></Col>
-          <Col className="col"></Col>
-          <Col className="col"></Col>
-          <Col className="col"></Col>
+          <Col className="col">Сорт</Col>
+          <Col className="col">Сорт</Col>
+          <Col className="col">Сорт</Col>
+          <Col className="col">Сорт</Col>
         </Row>
     
       </div>
