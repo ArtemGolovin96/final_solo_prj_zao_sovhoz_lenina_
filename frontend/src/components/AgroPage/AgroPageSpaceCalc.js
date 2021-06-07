@@ -5,13 +5,25 @@ import store from "../../redux/store";
 import axios from "axios";
 import Select from "react-select";
 import VisualSpace from "./VisualSpace/VisualSpace";
+import {
+  takeRowsForAntDAction,
+  takeColumnsForAntDAction,
+  selectedSortsAntdAction,
+  selectedSortsAntdSectorAction,
+} from "../../redux/action";
 
 class AgroPageSpaceCalc extends Component {
   state = {
     sorts: [],
     sortsSelected: [],
-    ventel: false
+    ventel: false,
   };
+
+  //Таймауты
+  timeOutIdRows = null;
+  timeOutIdColumns = null;
+  timeOutIdSelectedElGectar = null;
+  timeOutIdSelectedElSector = null;
 
   componentDidMount() {
     this.getSpacesSorts();
@@ -31,14 +43,41 @@ class AgroPageSpaceCalc extends Component {
   };
 
   onChangeSelect = (e) => {
-    console.log('check on change', e)
     this.setState({ sortsSelected: e });
     // this.setState({ ventel: true })
   };
 
   submitHandler = (e) => {
     e.preventDefault();
-  }
+  };
+
+  onChangeRows = (e) => {
+    clearTimeout(this.timeOutId);
+    this.timeOutIdRows = setTimeout(() => {
+      this.props.takeRowsForAntDActionActionProps(e);
+    }, 1000);
+  };
+
+  onChangeColumns = (e) => {
+    clearTimeout(this.timeOutIdColumns);
+    this.timeOutIdColumns = setTimeout(() => {
+      this.props.takeColumnsForAntDActionActionProps(e);
+    }, 1000);
+  };
+
+  onChangeSelectedElGectar = (e, label) => {
+    clearTimeout(this.timeOutIdSelectedElGectar);
+    this.timeOutIdSelectedElGectar = setTimeout(() => {
+      this.props.selectedSortsAntdActionProps(e, label);
+    }, 1000);
+  };
+
+  onChangeSelectedElSector = (e, el) => {
+    clearTimeout(this.timeOutIdSelectedElSector);
+    this.timeOutIdSelectedElSector = setTimeout(() => {
+      this.props.selectedSortsAntdSectorActionProps(e, el);
+    }, 1000);
+  };
 
   render() {
     return (
@@ -91,21 +130,46 @@ class AgroPageSpaceCalc extends Component {
             </div>
             <div className="selected">
               {this.state.sortsSelected.map((el) => {
-                  return (
-                    <div className="selected-input-container">
-                      <span className="selected-name-sorts">{el.label}</span>
-                      <input
-                        name="selected"
-                        placeholder="введите количество гектар вашего сорта"
-                      >
-                      </input>
-                    </div>
-                  );
-                })
-              }
+                return (
+                  <div className="selected-input-container">
+                    <p className="selected-name-sorts">{el.label}</p>
+                    <input
+                      name="selected"
+                      placeholder="введите количество гектар вашего сорта"
+                      onChange={(e) => this.onChangeSelectedElGectar(e, el.label)}
+                    ></input>
+                    <input
+                      className="sorts-gertars-nput"
+                      name="rows-sort-gektars"
+                      placeholder="Формат - 1.1"
+                      onChange={(e) => this.onChangeSelectedElSector(e, el)}
+                    ></input>
+                  </div>
+                );
+              })}
             </div>
           </form>
-          <VisualSpace />
+          <div className="visual-antd-continer">
+            <VisualSpace />
+            <div className="input-sectors-container">
+              <p className="rows-p-input">
+                Введите количество секторов по горизонтали
+              </p>
+              <input
+                className="input-int-rows"
+                type="number"
+                onChange={this.onChangeRows}
+              ></input>
+              <p className="rows-p-input">
+                Введите количество секторов по вертикали
+              </p>
+              <input
+                className="input-int-columns"
+                type="number"
+                onChange={this.onChangeColumns}
+              ></input>
+            </div>
+          </div>
         </div>
       </main>
     );
@@ -113,7 +177,6 @@ class AgroPageSpaceCalc extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     options: state.globalArrOfSorts,
   };
@@ -121,10 +184,18 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // loginInputFromAdminPageAddActionProps: (e) => { dispatch(loginInputFromAdminPageAddAction(e.target.value)) },
-    // passwInputFromAdminPageAddActionProps: (e) => { dispatch(passwInputFromAdminPageAddAction(e.target.value)) },
-    // loginInputFromAdminPageDeleteActionProps: (e) => { dispatch(loginInputFromAdminPageDeleteAction(e.target.value)) },
-    // passwInputFromAdminPageDeleteActionrops: (e) => { dispatch(passwInputFromAdminPageDeleteAction(e.target.value)) },
+    takeRowsForAntDActionActionProps: (e) => {
+      dispatch(takeRowsForAntDAction(e.target.value));
+    },
+    takeColumnsForAntDActionActionProps: (e) => {
+      dispatch(takeColumnsForAntDAction(e.target.value));
+    },
+    selectedSortsAntdActionProps: (e, label) => {
+      dispatch(selectedSortsAntdAction(e.target.value, label));
+    },
+    selectedSortsAntdSectorActionProps: (e, el) => {
+      dispatch(selectedSortsAntdSectorAction(e.target.value, el));
+    },
   };
 };
 
