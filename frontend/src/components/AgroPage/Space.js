@@ -7,6 +7,7 @@ import VisualSpace from "./VisualSpace/VisualSpace";
 import { YMaps, Map, GeoObject, Rectangle, Button } from "react-yandex-maps";
 import ButtonGroup from "antd/lib/button/button-group";
 import { Link } from "react-router-dom";
+import { takeArrOfSotsAction } from '../../redux/action'
 // import { Button } from "antd";
 
 // import {
@@ -36,7 +37,22 @@ class Space extends Component {
 
   componentDidMount() {
     this.getSpaces();
+    this.getSpacesSorts();
+    
   }
+
+  getSpacesSorts = () => {
+    axios
+      .get("http://localhost:7778/agro/sorts")
+      .then((response) => {
+        const arr = [...response.data];
+        this.setState({ arrOfAllSorts: arr });
+        this.props.takeArrOfSotsActionProps(arr);
+      })
+      .catch(function (error) {
+        alert("Ошибка загрузки страницы. Обратитесь к администратору");
+      });
+  };
 
   getSpaces = () => {
     axios
@@ -44,7 +60,6 @@ class Space extends Component {
       .then((response) => {
         const arr = [...response.data];
         this.setState({ arrOfSpacesFromBack: arr });
-        console.log(this.state.arrOfSpacesFromBack);
       })
       .catch(function (error) {
         alert("Ошибка загрузки страницы. Обратитесь к администратору");
@@ -182,10 +197,7 @@ class Space extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // loginInputFromAdminPageAddActionProps: (e) => { dispatch(loginInputFromAdminPageAddAction(e.target.value)) },
-    // passwInputFromAdminPageAddActionProps: (e) => { dispatch(passwInputFromAdminPageAddAction(e.target.value)) },
-    // loginInputFromAdminPageDeleteActionProps: (e) => { dispatch(loginInputFromAdminPageDeleteAction(e.target.value)) },
-    // passwInputFromAdminPageDeleteActionrops: (e) => { dispatch(passwInputFromAdminPageDeleteAction(e.target.value)) },
+    takeArrOfSotsActionProps: (e) => { dispatch(takeArrOfSotsAction(e)) },
   };
 };
 

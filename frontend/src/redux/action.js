@@ -61,4 +61,52 @@ export function passwInputFromAdminPageDeleteAction(passFromInputDelete) {
   }
 }
 
+export function takeArrOfSotsAction(arrOfSorts) {
+  return {
+    type: "TAKE_ARR_OF_SORTS_FROM_BACK",
+    payload: {
+      arrOfSorts
+    }
+  }
+}
+
+export function takeRowsForAntDAction(rows) {
+  return {
+    type: "ROWS",
+    payload: {
+      rows
+    }
+  }
+}
+
+
+export function takeColumnsForAntDAction(columns) {
+  return {
+    type: "COLUMNS",
+    payload: {
+      columns
+    }
+  }
+}
+
+
+export function selectedSortsAntdAction(e, el) {
+  return {
+    type: "SELECTED_SORT",
+    payload: {
+      el: el,
+      e: e,
+    }
+  }
+}
+
+export function selectedSortsAntdSectorAction(e, el) {
+  return {
+    type: "SELECTED_SORT_SECTOR",
+    payload: {
+      e: e,
+      el: el,
+    }
+  }
+}
 

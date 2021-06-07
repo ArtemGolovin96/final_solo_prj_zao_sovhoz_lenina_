@@ -38,6 +38,20 @@ const arrOfSorts = [
   { id: 9, name: "Холидей", berryweight: 25, yieldbush: 1.5 },
 ];
 
+const arrOfSortsForCalc = [
+      { value: 1, label: "Эльсата", berryweight: 35, yieldbush: 1.5 },
+      { value: 2, label: "Мальвина", berryweight: 40, yieldbush: 0.9 },
+      { value: 3, label: "Богема", berryweight: 45, yieldbush: 1.0 },
+      { value: 4, label: "Пегас", berryweight: 40, yieldbush: 1.5 },
+      { value: 5, label: "Диамант", berryweight: 20, yieldbush: 1.3 },
+      { value: 6, label: "Гигантелла", berryweight: 90, yieldbush: 1.0 },
+      { value: 7, label: "Зенга", berryweight: 90, yieldbush: 1.0 },
+      { value: 8, label: "Кимберли", berryweight: 40, yieldbush: 2.0 },
+      { value: 9, label: "Холидей", berryweight: 25, yieldbush: 1.5 },
+    
+];
+
+
 const arrOfSapaces = [
   {
     id: 1,
@@ -57,6 +71,7 @@ const arrOfSapaces = [
       { id: 9, name: "Холидей", berryweight: 25, yieldbush: 1.5 },
     ],
   },
+
 
   {
     id: 2,
@@ -199,6 +214,28 @@ app.get("/agro", function(req,res) {
   }
   
 })
+
+app.get("/agro/sorts", function(req,res) {
+  console.log('Сорта отправлены')
+  if(arrOfSapaces) {
+    res.status(200).send(arrOfSorts)
+  } else {
+    res.status(500).send("Ошибка получения списка сортов")
+  }
+  
+})
+
+app.get("/agro-calc", function(req,res) {
+  console.log('Сорта отправлены')
+  if(arrOfSapaces) {
+    res.status(200).send(arrOfSortsForCalc)
+  } else {
+    res.status(500).send("Ошибка получения списка сортов")
+  }
+  
+})
+
+
 
 app.listen(7778, () => {
   console.log("СЕРВЕР ЗАПУЩЕН");
