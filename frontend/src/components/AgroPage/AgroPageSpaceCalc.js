@@ -11,19 +11,58 @@ import {
   selectedSortsAntdAction,
   selectedSortsAntdSectorAction,
 } from "../../redux/action";
+import { Upload, message } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+
+const { Dragger } = Upload;
+
 
 class AgroPageSpaceCalc extends Component {
   state = {
     sorts: [],
     sortsSelected: [],
     ventel: false,
+    response: '',
   };
+
+ 
+
+  propsFiles = {
+    name: "file",
+    multiple: true,
+    action: "http://localhost:7778/agro-calc",
+    info: '',
+    onChange: (info) => {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        // console.log(info.file, info.fileList);
+      }
+      if (status === "done") {
+        setTimeout(() => {
+          console.log(info)
+        }, 200)
+        message.success(`${info.file.name} file uploaded successfully.`);
+        this.setState({response: info.file.response})
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+    
+  };
+
+
+
 
   //Таймауты
   timeOutIdRows = null;
   timeOutIdColumns = null;
   timeOutIdSelectedElGectar = null;
   timeOutIdSelectedElSector = null;
+
+
 
   componentDidMount() {
     this.getSpacesSorts();
@@ -34,6 +73,9 @@ class AgroPageSpaceCalc extends Component {
       .get("http://localhost:7778/agro-calc")
       .then((response) => {
         const arr = [...response.data];
+        setTimeout(() => {
+          console.log(this.state)
+        }, 1000)
         this.setState({ sorts: arr });
         console.log(arr);
       })
@@ -47,9 +89,7 @@ class AgroPageSpaceCalc extends Component {
     // this.setState({ ventel: true })
   };
 
-  submitHandler = (e) => {
-    e.preventDefault();
-  };
+
 
   onChangeRows = (e) => {
     clearTimeout(this.timeOutId);
@@ -79,21 +119,41 @@ class AgroPageSpaceCalc extends Component {
     }, 1000);
   };
 
+  submitHandler = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = {...formData}
+    for(let key of formData.keys()) {
+      console.log(key);
+    }
+    const finalObjDataplusRedux = {
+      spaceName: formData.get('name'),
+      spaceBrigade: formData.get('brigade'),
+      spaceAreaAll: +formData.get('area-all'),
+      sortsOnSquare: this.props.sortsOnSquare,
+      volumeRowsOnSquare: this.props.volumeRowsOnSquare.length,
+      volumeColumnsOnSquare: this.props.volumeColumnsOnSquare.length,
+      fileId: this.state.response 
+
+    }
+    console.log(finalObjDataplusRedux)
+  }
+
   render() {
     return (
       <main className="agronom-space-calc">
         <header className="agro-space-calc-header">{/* //Some value */}</header>
         <div className="calc-container">
-          <h3 className="name-calc">Создание нового поля</h3>
+          <h3 className="name-calc">Создание   нового поля</h3>
           <form className="space-calc-form" onSubmit={this.submitHandler}>
             <div className="calc-name-brigade">
-              <p className="input-name">Введите название поля</p>
+              <p className="input-name">Введите название поля - </p>
               <input
                 className="space-calc-input-name"
                 placeholder="Название поля"
                 name="name"
               ></input>
-              <p className="input-name">Выберите бригаду</p>
+              <p className="input-name">Выберите бригаду - </p>
               <select
                 className="space-calc-input-name"
                 placeholder="Название поля"
@@ -104,13 +164,17 @@ class AgroPageSpaceCalc extends Component {
               </select>
             </div>
             <div className="calc-main">
+              <div className="gektars-container-input">
               <p className="input-name">Введите площадь поля в гектарах</p>
               <input
                 className="space-calc-input-name"
                 placeholder="общая S в гектарах"
-                name="area"
+                name="area-all"
+                type="number"
               ></input>
-
+              </div>
+              <div className="select-container">
+              <p className="p-select-sorts">Выберите необходимые сорта</p>
               <Select
                 onChange={(e) => this.onChangeSelect(e)}
                 options={this.state.sorts}
@@ -127,6 +191,7 @@ class AgroPageSpaceCalc extends Component {
                   }),
                 }}
               />
+              </div>
             </div>
             <div className="selected">
               {this.state.sortsSelected.map((el) => {
@@ -134,13 +199,16 @@ class AgroPageSpaceCalc extends Component {
                   <div className="selected-input-container">
                     <p className="selected-name-sorts">{el.label}</p>
                     <input
-                      name="selected"
+                      name="selected-gekars-sort"
                       placeholder="введите количество гектар вашего сорта"
-                      onChange={(e) => this.onChangeSelectedElGectar(e, el.label)}
+                      className="sorts-gertars-nput"
+                      onChange={(e) =>
+                        this.onChangeSelectedElGectar(e, el.label)
+                      }
                     ></input>
                     <input
                       className="sorts-gertars-nput"
-                      name="rows-sort-gektars"
+                      name="position-sort-gektars"
                       placeholder="Формат - 1.1"
                       onChange={(e) => this.onChangeSelectedElSector(e, el)}
                     ></input>
@@ -148,28 +216,44 @@ class AgroPageSpaceCalc extends Component {
                 );
               })}
             </div>
-          </form>
-          <div className="visual-antd-continer">
-            <VisualSpace />
-            <div className="input-sectors-container">
-              <p className="rows-p-input">
-                Введите количество секторов по горизонтали
-              </p>
-              <input
-                className="input-int-rows"
-                type="number"
-                onChange={this.onChangeRows}
-              ></input>
-              <p className="rows-p-input">
-                Введите количество секторов по вертикали
-              </p>
-              <input
-                className="input-int-columns"
-                type="number"
-                onChange={this.onChangeColumns}
-              ></input>
+            <div className="visual-antd-continer">
+              <VisualSpace />
+              <div className="input-sectors-container">
+                <p className="rows-p-input">
+                  Введите количество секторов по горизонтали
+                </p>
+                <input
+                  className="input-int-rows"
+                  type="number"
+                  onChange={this.onChangeRows}
+                  nmae="space-rows"
+                ></input>
+                <p className="rows-p-input">
+                  Введите количество секторов по вертикали
+                </p>
+                <input
+                  className="input-int-columns"
+                  type="number"
+                  onChange={this.onChangeColumns}
+                  name="space-columns"
+                ></input>
+              </div>
+
+              <div className="files-data-container">
+                {/* Только для MVP */}
+                <Dragger className="dragger" {...this.propsFiles}>
+                  <p className="ant-upload-text">
+                    Перетащите нужный файл или кликните и сохраните
+                  </p>
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <div className="ant-upload-list ant-upload-list-texte"></div>
+                </Dragger>
+              </div>
             </div>
-          </div>
+            <button className="save-space-button" type="submit">Сохранить поле</button>
+          </form>
         </div>
       </main>
     );
@@ -179,6 +263,9 @@ class AgroPageSpaceCalc extends Component {
 const mapStateToProps = (state) => {
   return {
     options: state.globalArrOfSorts,
+    sortsOnSquare: state.sortsOnSquare,
+    volumeRowsOnSquare: state.volumeRowsOnSquare,
+    volumeColumnsOnSquare: state.volumeColumnsOnSquare,
   };
 };
 
