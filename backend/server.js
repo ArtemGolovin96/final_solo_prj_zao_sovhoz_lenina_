@@ -4,6 +4,10 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { send } = require("process");
+const { MongoClient, Binary } = require("mongodb");
+let db = "";
+const multer  = require('multer');
+const upload = multer()
 // import { v4 as uuidv4 } from 'uuid';
 
 app.use(express.json());
@@ -15,6 +19,35 @@ app.all("*", function (req, res, next) {
   res.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept");
   next();
 });
+
+MongoClient.connect(
+  "mongodb+srv://Artem:12345@clustertest.b5mrj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  { useUnifiedTopology: true },
+  function (err, client) {
+    if (err) {
+      console.log("Please check you db connection parameters");
+    } else {
+      console.log("Connection success");
+      db = client.db("MyFinalPrjDB")
+      // console.log(db)
+    }
+  }
+);
+
+
+app.post("/agro-calc", upload.single('file'),  function (req, res) {
+  let count = 0;
+  count++;
+  const file = req.file;
+  const insert_file = {};
+  insert_file.file_data = file.buffer;
+  const collection = db.collection('files_svh');
+  collection.insertOne(insert_file, (err, resFromMongo) => {
+    const resIdFromMongo = resFromMongo.insertedId;
+    res.status(200).json(resIdFromMongo);
+  })
+});
+
 
 const arrOfUSers = [
   { login: "test-login", pass: "test-pass" },
@@ -39,18 +72,16 @@ const arrOfSorts = [
 ];
 
 const arrOfSortsForCalc = [
-      { value: 1, label: "Эльсата", berryweight: 35, yieldbush: 1.5 },
-      { value: 2, label: "Мальвина", berryweight: 40, yieldbush: 0.9 },
-      { value: 3, label: "Богема", berryweight: 45, yieldbush: 1.0 },
-      { value: 4, label: "Пегас", berryweight: 40, yieldbush: 1.5 },
-      { value: 5, label: "Диамант", berryweight: 20, yieldbush: 1.3 },
-      { value: 6, label: "Гигантелла", berryweight: 90, yieldbush: 1.0 },
-      { value: 7, label: "Зенга", berryweight: 90, yieldbush: 1.0 },
-      { value: 8, label: "Кимберли", berryweight: 40, yieldbush: 2.0 },
-      { value: 9, label: "Холидей", berryweight: 25, yieldbush: 1.5 },
-    
+  { value: 1, label: "Эльсата", berryweight: 35, yieldbush: 1.5 },
+  { value: 2, label: "Мальвина", berryweight: 40, yieldbush: 0.9 },
+  { value: 3, label: "Богема", berryweight: 45, yieldbush: 1.0 },
+  { value: 4, label: "Пегас", berryweight: 40, yieldbush: 1.5 },
+  { value: 5, label: "Диамант", berryweight: 20, yieldbush: 1.3 },
+  { value: 6, label: "Гигантелла", berryweight: 90, yieldbush: 1.0 },
+  { value: 7, label: "Зенга", berryweight: 90, yieldbush: 1.0 },
+  { value: 8, label: "Кимберли", berryweight: 40, yieldbush: 2.0 },
+  { value: 9, label: "Холидей", berryweight: 25, yieldbush: 1.5 },
 ];
-
 
 const arrOfSapaces = [
   {
@@ -71,7 +102,6 @@ const arrOfSapaces = [
       { id: 9, name: "Холидей", berryweight: 25, yieldbush: 1.5 },
     ],
   },
-
 
   {
     id: 2,
@@ -150,8 +180,6 @@ const arrOfSapaces = [
   },
 ];
 
-
-
 app.post("/", function (req, res) {
   const resOfArr = arrOfUSers.find((el) => {
     if (el.pass === req.body.data.pass && el.login === req.body.data.login) {
@@ -205,37 +233,32 @@ app.post("/admin", function (req, res) {
   }
 });
 
-app.get("/agro", function(req,res) {
-  console.log('Произошла перезагрузка страницы Agro')
-  if(arrOfSapaces) {
-    res.status(200).send(arrOfSapaces)
+app.get("/agro", function (req, res) {
+  console.log("Произошла перезагрузка страницы Agro");
+  if (arrOfSapaces) {
+    res.status(200).send(arrOfSapaces);
   } else {
-    res.status(500).send("Ошибка")
+    res.status(500).send("Ошибка");
   }
-  
-})
+});
 
-app.get("/agro/sorts", function(req,res) {
-  console.log('Сорта отправлены')
-  if(arrOfSapaces) {
-    res.status(200).send(arrOfSorts)
+app.get("/agro/sorts", function (req, res) {
+  console.log("Сорта отправлены");
+  if (arrOfSapaces) {
+    res.status(200).send(arrOfSorts);
   } else {
-    res.status(500).send("Ошибка получения списка сортов")
+    res.status(500).send("Ошибка получения списка сортов");
   }
-  
-})
+});
 
-app.get("/agro-calc", function(req,res) {
-  console.log('Сорта отправлены')
-  if(arrOfSapaces) {
-    res.status(200).send(arrOfSortsForCalc)
+app.get("/agro-calc", function (req, res) {
+  console.log("Сорта отправлены");
+  if (arrOfSapaces) {
+    res.status(200).send(arrOfSortsForCalc);
   } else {
-    res.status(500).send("Ошибка получения списка сортов")
+    res.status(500).send("Ошибка получения списка сортов");
   }
-  
-})
-
-
+});
 
 app.listen(7778, () => {
   console.log("СЕРВЕР ЗАПУЩЕН");
