@@ -4,10 +4,11 @@ import store from "../../redux/store";
 import { connect } from "react-redux";
 import axios from "axios";
 import VisualSpace from "./VisualSpace/VisualSpace";
+import VisualSpaceOpened from "./VisualSpace/VisualSpaceOpened";
 import { YMaps, Map, GeoObject, Rectangle, Button } from "react-yandex-maps";
 import ButtonGroup from "antd/lib/button/button-group";
 import { Link } from "react-router-dom";
-import { takeArrOfSotsAction } from '../../redux/action'
+import { takeArrOfSotsAction } from "../../redux/action";
 // import { Button } from "antd";
 
 // import {
@@ -20,25 +21,24 @@ class Space extends Component {
     arrOfSpacesFromBack: [],
     clickedSpaceOpened: "",
     sortsArr: [],
+    arrOfAllSorts: [],
     showMap: false,
-    buttonOnMapType: 'Гибрид',
+    buttonOnMapType: "Гибрид",
     typeOfMap: "yandex#publicMapHybrid",
   };
 
   onClickSpaceOpen = (e, el) => {
     this.setState({ open: true });
     const res = this.state.arrOfSpacesFromBack.find(
-      (item) => el.id === item.id
+      (item) => el._id === item._id
     );
     this.setState({ clickedSpaceOpened: res });
-    this.setState({ sortsArr: res.sort });
-    console.log(res.sort);
+    this.setState({ sortsArr: res.sortsOnSquare });
   };
 
   componentDidMount() {
     this.getSpaces();
     this.getSpacesSorts();
-    
   }
 
   getSpacesSorts = () => {
@@ -60,6 +60,7 @@ class Space extends Component {
       .then((response) => {
         const arr = [...response.data];
         this.setState({ arrOfSpacesFromBack: arr });
+        console.log(arr)
       })
       .catch(function (error) {
         alert("Ошибка загрузки страницы. Обратитесь к администратору");
@@ -67,25 +68,48 @@ class Space extends Component {
   };
 
   onClickTypeMap = (prevState) => {
-    console.log('cccc')
     if (this.state.typeOfMap === "yandex#publicMapHybrid") {
       this.setState({ typeOfMap: "yandex#map" });
-      return Object.assign({}, prevState, { type: 'yandex#map' });
+      return Object.assign({}, prevState, { type: "yandex#map" });
     } else {
       this.setState({ typeOfMap: "yandex#publicMapHybrid" });
-      return Object.assign({}, prevState, { type: 'yandex#publicMapHybrid' });
+      return Object.assign({}, prevState, { type: "yandex#publicMapHybrid" });
     }
   };
 
   onClickShoWMap = () => {
     if (this.state.showMap === false) {
       this.setState({ showMap: true });
-      console.log("check true");
     } else {
       this.setState({ showMap: false });
     }
   };
 
+  gettingЕheAverage = () => {
+    let res = this.state.arrOfAllSorts.reduce((acc, item) => {
+      if (
+        this.state.sortsArr.some((name) => name.name === item.name)
+      ) {
+        console.log(this.state.sortsArr.length, "<-----------");
+        let res = acc + item.yieldbush;
+        return res;
+      } else {
+        return acc;
+      }
+    }, 0)
+    let average = (res / this.state.sortsArr.length) * 5;
+    return (average)
+  }
+
+  allYeldFromSpace = () => {
+    const metersGektars = 10000;
+    const allArea = this.state.clickedSpaceOpened.spaceAreaAll;
+    let metersSpace = allArea * metersGektars;
+    let average = this.gettingЕheAverage();
+    let result = metersSpace * average;
+    let tons = result * 0.001;
+    return tons
+  }
 
 
 
@@ -95,57 +119,77 @@ class Space extends Component {
         <div className="space-container">
           <h2 className="space-container-name">Название полей</h2>
           {this.state.arrOfSpacesFromBack.map((el) => {
+            // console.log(this.state.arrOfSpacesFromBack)
             return (
               <section
                 className="space"
                 onClick={(e) => this.onClickSpaceOpen(e, el)}
               >
                 <div className="container-name-space">
-                  <p className="name-space">{el.name}</p>
-                  <p className="name-brigade"> Бригада № {el.brigade}</p>
+                  <p className="name-space">{el.spaceName}</p>
+                  <p className="name-brigade"> {el.spaceBrigade}</p>
                 </div>
               </section>
             );
           })}
           <section className="add-space-button-section">
             <Link className="add-space-button-link" to="agro-calc">
-              <button className="add-space-button">Добавить новое поле
-              </button>
+              <button className="add-space-button">Добавить новое поле</button>
             </Link>
           </section>
         </div>
         <div className={this.state.open ? "space-opened" : "space-closed"}>
           <div className="container-name-space-opened">
-            <p className="name-space">{this.state.clickedSpaceOpened.name}</p>
+            <p className="name-space">
+              {this.state.clickedSpaceOpened.spaceName}
+            </p>
             <p className="name-brigade">
               {" "}
-              Бригада № {this.state.clickedSpaceOpened.brigade}
+              {/* Бригада № {console.log(this.state.clickedSpaceOpened)} */}
             </p>
           </div>
           <div className="container-space-information">
+            <p className="start-space">Начало использования поля - 2018 год</p>
+            <p className="all-gek-space-p">Площадь поля - {this.state.clickedSpaceOpened.spaceAreaAll} {" "} гектар</p>
+            <p className="all-yield-p">Всего урожая сс поля - {
+                this.allYeldFromSpace()
+            } {" "} тонн </p>
             <p className="start-space">
-              Начало использования поля -{" "}
-              {this.state.clickedSpaceOpened.startyear} год
+              Средняя планируемая урожайность с одного метра грядки - {" "}
+              {
+                this. gettingЕheAverage()
+              }{" "}
+              кг
             </p>
             <p className="start-space">
-              Средняя планируемая урожайность с одного куста -{" "}
-              {this.state.clickedSpaceOpened.lastyearsyield} кг
-            </p>
-            <p className="start-space">
-              Средняя планируемая урожайность с одного метра грядки -{" "}
-              {(this.state.clickedSpaceOpened.lastyearsyield * 3.3).toFixed(2)}{" "}
+              Средняя планируемая урожайность с одного куста -
+              {/* Я знаю про О большое. Это для MVP */}
+              {this.state.arrOfAllSorts.reduce((acc, item) => {
+                if (
+                  this.state.sortsArr.some((name) => name.name === item.name)
+                ) {
+
+                  return acc + item.yieldbush / this.state.sortsArr.length;
+                } else {
+                  return acc;
+                }
+              }, 0)}
               кг
             </p>
             <ul className="space-sorts">
-              Сорта ягоды в поле:{" "}
-              {this.state.sortsArr.map((el) => {
-                return <li>{el.name}, </li>;
-              })}{" "}
+              Сорта ягоды в поле:{"  "}
+              {this.state.sortsArr.map((el, index) => {
+                if (index !== this.state.sortsArr.length - 1) {
+                  return " " + el.name + ", ";
+                } else {
+                  return " " + el.name + " ";
+                }
+              })}
             </ul>
           </div>
           <div className="container-space-opened-visual">
             <div className="visual-space">
-              <VisualSpace />
+              <VisualSpaceOpened arg={this.state.clickedSpaceOpened} />
             </div>
             <div className="visual-space-information">
               <div className="space-information">
@@ -159,16 +203,20 @@ class Space extends Component {
                     : "Показать расположение на карте"}
                 </button>
                 <div className="map-container">
-                  {
-
-                  }
-                  <YMaps className="ya-maps" >
+                  {this.state.showMap? 
+                  <YMaps >
                     <Map
-                      defaultState={{ center: [55.75, 37.57], zoom: 10, type: this.state.typeOfMap, }}
-                      width={300}
-                      margin={150}
+                      defaultState={{
+                        center: [55.75, 37.57],
+                        zoom: 10,
+                        type: this.state.typeOfMap,
+                      }}
                     >
-                      <Button data={{ content: this.state.buttonOnMapType }} options={{ maxWidth: [28, 150, 178] }} onClick={() => this.onClickTypeMap(this.state)} />
+                      <Button
+                        data={{ content: this.state.buttonOnMapType }}
+                        options={{ maxWidth: [28, 150, 178] }}
+                        onClick={() => this.onClickTypeMap(this.state)}
+                      />
                       <GeoObject
                         geometry={{
                           type: "Point",
@@ -184,7 +232,8 @@ class Space extends Component {
                         }}
                       />
                     </Map>
-                  </YMaps>
+                  </YMaps> : ''
+                  }
                 </div>
               </div>
             </div>
@@ -197,8 +246,10 @@ class Space extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    takeArrOfSotsActionProps: (e) => { dispatch(takeArrOfSotsAction(e)) },
+    takeArrOfSotsActionProps: (e) => {
+      dispatch(takeArrOfSotsAction(e));
+    },
   };
 };
 
-export default connect(() => { }, mapDispatchToProps)(Space);
+export default connect(() => {}, mapDispatchToProps)(Space);

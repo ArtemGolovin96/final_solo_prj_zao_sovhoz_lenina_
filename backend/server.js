@@ -5,9 +5,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { send } = require("process");
 const { MongoClient, Binary } = require("mongodb");
-let db = "";
 const multer  = require('multer');
-const upload = multer()
+const upload = multer();
+const Space = require('./Space');
+const mongoose = require("mongoose");
 // import { v4 as uuidv4 } from 'uuid';
 
 app.use(express.json());
@@ -20,33 +21,18 @@ app.all("*", function (req, res, next) {
   next();
 });
 
-MongoClient.connect(
-  "mongodb+srv://Artem:12345@clustertest.b5mrj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-  { useUnifiedTopology: true },
-  function (err, client) {
-    if (err) {
-      console.log("Please check you db connection parameters");
-    } else {
-      console.log("Connection success");
-      db = client.db("MyFinalPrjDB")
-      // console.log(db)
-    }
-  }
-);
+mongoose.connect("mongodb+srv://Artem:12345@clustertest.b5mrj.mongodb.net/MyFinalPrjDB?retryWrites=true&w=majority");
+const db = mongoose.connection;
 
-
-app.post("/agro-calc", upload.single('file'),  function (req, res) {
-  let count = 0;
-  count++;
-  const file = req.file;
-  const insert_file = {};
-  insert_file.file_data = file.buffer;
-  const collection = db.collection('files_svh');
-  collection.insertOne(insert_file, (err, resFromMongo) => {
-    const resIdFromMongo = resFromMongo.insertedId;
-    res.status(200).json(resIdFromMongo);
-  })
+db.on('error', (err) => {
+  console.log(err)
 });
+
+db.once('open', () => {
+  console.log('Connection DB')
+})
+
+
 
 
 const arrOfUSers = [
@@ -235,11 +221,14 @@ app.post("/admin", function (req, res) {
 
 app.get("/agro", function (req, res) {
   console.log("Произошла перезагрузка страницы Agro");
-  if (arrOfSapaces) {
-    res.status(200).send(arrOfSapaces);
-  } else {
-    res.status(500).send("Ошибка");
-  }
+  // const collection = db.collection('spaces');
+  Space.find({}).then((space) => {
+    if(!space) {
+      res.status(500).send("Ошибка")
+    }
+    res.status(200).send(space)
+  })
+
 });
 
 app.get("/agro/sorts", function (req, res) {
@@ -258,6 +247,31 @@ app.get("/agro-calc", function (req, res) {
   } else {
     res.status(500).send("Ошибка получения списка сортов");
   }
+});
+
+
+app.post("/agro-calc", upload.single('file'),  function (req, res) {
+  const file = req.file;
+  const insert_file = {};
+  insert_file.file_data = file.buffer;
+  const collection = db.collection('files_svh');
+  collection.insertOne(insert_file, (err, resFromMongo) => {
+    const resIdFromMongo = resFromMongo.insertedId;
+    res.status(200).json(resIdFromMongo);
+  })
+});
+
+
+app.post("/agro-calc-obj",  function (req, res) {
+  const body = req.body;
+  const collection = db.collection('spaces');
+  Space.insertOne(body, (err, res) => {
+    if(err) {
+      res.status(500).json("Ошибка");
+    }
+    res.status(200).json(res.insertedId);
+  })
+
 });
 
 app.listen(7778, () => {
