@@ -120,12 +120,7 @@ class AgroPageSpaceCalc extends Component {
   };
 
   submitHandler = (e) => {
-    e.preventDefault();
     const formData = new FormData(e.target);
-    const data = {...formData}
-    for(let key of formData.keys()) {
-      console.log(key);
-    }
     const finalObjDataplusRedux = {
       spaceName: formData.get('name'),
       spaceBrigade: formData.get('brigade'),
@@ -134,10 +129,22 @@ class AgroPageSpaceCalc extends Component {
       volumeRowsOnSquare: this.props.volumeRowsOnSquare.length,
       volumeColumnsOnSquare: this.props.volumeColumnsOnSquare.length,
       fileId: this.state.response 
-
     }
-    console.log(finalObjDataplusRedux)
+    
+    this.axiosPOSTfinalDataObj(finalObjDataplusRedux)
+
   }
+
+  axiosPOSTfinalDataObj = (obj) => {
+    const option = {
+      method: 'POST',
+      headers: {'content-type': 'application/json' },
+      data: JSON.stringify(obj),
+      url: 'http://localhost:7778/agro-calc-obj',
+    }
+    axios(option).then((res) => console.log(res))
+  }
+  
 
   render() {
     return (
